@@ -1,13 +1,14 @@
 import React, { useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Camera, Check, X } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface TaskCaptureProps {
   onClose: () => void;
+  habitName?: string;
 }
 
-export const TaskCapture: React.FC<TaskCaptureProps> = ({ onClose }) => {
+export const TaskCapture: React.FC<TaskCaptureProps> = ({ onClose, habitName }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
@@ -50,17 +51,21 @@ export const TaskCapture: React.FC<TaskCaptureProps> = ({ onClose }) => {
   const handleSubmit = () => {
     // Here we would typically send the photo to an AI service for verification
     toast({
-      title: "Task Verified!",
-      description: "Great job completing your task!",
+      title: "Habit Verified!",
+      description: habitName 
+        ? `Great job completing your ${habitName} habit!`
+        : "Great job completing your task!",
     });
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-xl p-6 max-w-lg w-full">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Capture Your Task</h2>
+          <h2 className="text-xl font-bold">
+            {habitName ? `Capture ${habitName}` : 'Capture Your Task'}
+          </h2>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
@@ -97,7 +102,7 @@ export const TaskCapture: React.FC<TaskCaptureProps> = ({ onClose }) => {
           {photo && (
             <Button onClick={handleSubmit} className="bg-success hover:bg-success/90">
               <Check className="mr-2 h-4 w-4" />
-              Verify Task
+              Verify Habit
             </Button>
           )}
         </div>
