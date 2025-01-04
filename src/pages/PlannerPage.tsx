@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import { TodoList } from "@/components/TodoList";
+import { TodoProvider } from "@/contexts/TodoContext";
 
 const PlannerPage = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -48,7 +49,9 @@ const PlannerPage = () => {
 
         <div className="backdrop-blur-sm bg-white/80 rounded-2xl shadow-xl p-8 border border-white/20">
           <h2 className="text-xl font-semibold text-focus mb-6">Todo List</h2>
-          <TodoList />
+          <TodoProvider>
+            <TodoList />
+          </TodoProvider>
         </div>
       </motion.div>
     </div>
