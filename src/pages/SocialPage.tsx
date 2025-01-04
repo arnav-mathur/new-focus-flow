@@ -1,13 +1,37 @@
 import { motion } from 'framer-motion';
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { UserPlus } from "lucide-react";
+import { UserPlus, Trophy, TrendingUp } from "lucide-react";
 
 const SocialPage = () => {
   const friends = [
-    { name: "Alex Kim", streak: 7, focus: "4h 30m" },
-    { name: "Sarah Chen", streak: 12, focus: "6h 15m" },
-    { name: "Mike Johnson", streak: 5, focus: "3h 45m" },
+    { 
+      name: "Alex Kim", 
+      avatar: "/placeholder.svg",
+      habits: [
+        { name: "Gym", streak: 7 },
+        { name: "Meditation", streak: 12 },
+        { name: "Reading", streak: 5 }
+      ]
+    },
+    { 
+      name: "Sarah Chen", 
+      avatar: "/placeholder.svg",
+      habits: [
+        { name: "Yoga", streak: 15 },
+        { name: "Writing", streak: 8 },
+        { name: "Running", streak: 3 }
+      ]
+    },
+    { 
+      name: "Mike Johnson", 
+      avatar: "/placeholder.svg",
+      habits: [
+        { name: "Swimming", streak: 4 },
+        { name: "Coding", streak: 20 },
+        { name: "Guitar", streak: 6 }
+      ]
+    },
   ];
 
   return (
@@ -15,7 +39,7 @@ const SocialPage = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-2xl mx-auto space-y-6"
+        className="max-w-4xl mx-auto space-y-6"
       >
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-focus">Friends Progress</h1>
@@ -33,27 +57,37 @@ const SocialPage = () => {
             </Button>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-6">
             {friends.map((friend, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="flex items-center justify-between p-4 rounded-lg bg-white/50"
+                className="p-6 rounded-lg bg-white/50 shadow-sm"
               >
-                <div className="flex items-center space-x-4">
-                  <Avatar />
-                  <div>
-                    <h3 className="font-medium text-gray-900">{friend.name}</h3>
-                    <p className="text-sm text-gray-600">
-                      {friend.streak} day streak
-                    </p>
+                <div className="flex items-start space-x-4">
+                  <Avatar className="w-16 h-16">
+                    <AvatarImage src={friend.avatar} alt={friend.name} />
+                    <AvatarFallback>{friend.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-lg text-gray-900 mb-2">{friend.name}</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {friend.habits.map((habit, habitIndex) => (
+                        <div
+                          key={habitIndex}
+                          className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+                        >
+                          <span className="text-sm text-gray-600">{habit.name}</span>
+                          <div className="flex items-center text-yellow-500">
+                            <Trophy className="w-4 h-4 mr-1" />
+                            <span className="text-sm font-medium">{habit.streak}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-medium text-focus">{friend.focus}</p>
-                  <p className="text-sm text-gray-600">Today's focus time</p>
                 </div>
               </motion.div>
             ))}

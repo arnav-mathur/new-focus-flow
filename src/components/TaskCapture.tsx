@@ -6,9 +6,14 @@ import { useToast } from "@/hooks/use-toast";
 interface TaskCaptureProps {
   onClose: () => void;
   habitName?: string;
+  onVerificationSuccess?: () => void;
 }
 
-export const TaskCapture: React.FC<TaskCaptureProps> = ({ onClose, habitName }) => {
+export const TaskCapture: React.FC<TaskCaptureProps> = ({ 
+  onClose, 
+  habitName,
+  onVerificationSuccess 
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
@@ -56,6 +61,9 @@ export const TaskCapture: React.FC<TaskCaptureProps> = ({ onClose, habitName }) 
         ? `Great job completing your ${habitName} habit!`
         : "Great job completing your task!",
     });
+    if (onVerificationSuccess) {
+      onVerificationSuccess();
+    }
     onClose();
   };
 
