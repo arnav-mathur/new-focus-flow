@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Camera, Trophy, TrendingUp } from 'lucide-react';
+import { Plus, Camera, Trophy, TrendingUp, MapPin } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { motion } from 'framer-motion';
 import { TaskCapture } from './TaskCapture';
+
+interface Location {
+  latitude: number;
+  longitude: number;
+  name: string;
+}
 
 interface Habit {
   id: string;
@@ -12,6 +18,7 @@ interface Habit {
   streak: number;
   lastCompleted?: Date;
   insights?: string[];
+  location?: Location;
 }
 
 export const HabitList = () => {
@@ -20,7 +27,12 @@ export const HabitList = () => {
       id: '1', 
       name: 'Gym', 
       streak: 3,
-      insights: ['Most productive in mornings', 'Better streak on weekdays']
+      insights: ['Most productive in mornings', 'Better streak on weekdays'],
+      location: {
+        latitude: 40.7128,
+        longitude: -74.0060,
+        name: "Local Gym"
+      }
     },
     { 
       id: '2', 
@@ -38,24 +50,56 @@ export const HabitList = () => {
   const [newHabit, setNewHabit] = useState('');
   const [showCapture, setShowCapture] = useState(false);
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
+  const [newLocation, setNewLocation] = useState('');
   const { toast } = useToast();
 
-  const addHabit = () => {
+  const addHabit = async () => {
     if (!newHabit.trim()) return;
+    
+    let location: Location | undefined;
+    
+    if (newLocation.trim()) {
+      try {
+        const position = await getCurrentPosition();
+        location = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          name: newLocation
+        };
+      } catch (error) {
+        toast({
+          title: "Location Error",
+          description: "Unable to get location. The habit will be created without location verification.",
+          variant: "destructive"
+        });
+      }
+    }
     
     const habit: Habit = {
       id: Date.now().toString(),
       name: newHabit,
       streak: 0,
-      insights: []
+      insights: [],
+      location
     };
     
     setHabits([...habits, habit]);
     setNewHabit('');
+    setNewLocation('');
     
     toast({
       title: "Habit Added",
       description: `${newHabit} has been added to your habits.`
+    });
+  };
+
+  const getCurrentPosition = (): Promise<GeolocationPosition> => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('Geolocation is not supported'));
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(resolve, reject);
     });
   };
 
@@ -69,7 +113,38 @@ export const HabitList = () => {
     setSelectedHabit(null);
   };
 
-  const handleVerificationSuccess = (habitId: string) => {
+  const handleVerificationSuccess = async (habitId: string) => {
+    const habit = habits.find(h => h.id === habitId);
+    if (!habit) return;
+
+    if (habit.location) {
+      try {
+        const position = await getCurrentPosition();
+        const distance = calculateDistance(
+          position.coords.latitude,
+          position.coords.longitude,
+          habit.location.latitude,
+          habit.location.longitude
+        );
+
+        if (distance > 0.1) { // 0.1 km = 100 meters
+          toast({
+            title: "Location Verification Failed",
+            description: "You're not at the specified location for this habit.",
+            variant: "destructive"
+          });
+          return;
+        }
+      } catch (error) {
+        toast({
+          title: "Location Error",
+          description: "Unable to verify location. Please check your GPS settings.",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
     setHabits(habits.map(h => {
       if (h.id === habitId) {
         return {
@@ -83,6 +158,18 @@ export const HabitList = () => {
     }));
   };
 
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  };
+
   const generateNewInsight = (habit: Habit) => {
     const insights = [
       `${habit.name} completed ${habit.streak + 1} times in a row!`,
@@ -94,11 +181,17 @@ export const HabitList = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-4">
+      <div className="flex gap-4 flex-wrap">
         <Input
           placeholder="Add new habit..."
           value={newHabit}
           onChange={(e) => setNewHabit(e.target.value)}
+          className="flex-1"
+        />
+        <Input
+          placeholder="Location name (optional)"
+          value={newLocation}
+          onChange={(e) => setNewLocation(e.target.value)}
           className="flex-1"
         />
         <Button onClick={addHabit}>
@@ -122,6 +215,13 @@ export const HabitList = () => {
                 <span className="text-sm font-medium">{habit.streak} streak</span>
               </div>
             </div>
+
+            {habit.location && (
+              <div className="flex items-center text-sm text-gray-600 mb-4">
+                <MapPin className="w-4 h-4 mr-2" />
+                <span>{habit.location.name}</span>
+              </div>
+            )}
 
             {habit.insights && habit.insights.length > 0 && (
               <div className="mb-4 p-3 bg-gray-50 rounded-lg">

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
+import { TodoList } from "@/components/TodoList";
 
 const PlannerPage = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -43,6 +44,11 @@ const PlannerPage = () => {
               Ask your AI guru for scheduling advice and productivity tips
             </p>
           </div>
+        </div>
+
+        <div className="backdrop-blur-sm bg-white/80 rounded-2xl shadow-xl p-8 border border-white/20">
+          <h2 className="text-xl font-semibold text-focus mb-6">Todo List</h2>
+          <TodoList />
         </div>
       </motion.div>
     </div>
