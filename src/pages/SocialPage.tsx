@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { UserPlus, Trophy, TrendingUp } from "lucide-react";
+import { HabitFeed } from '@/components/social/HabitFeed';
 
 const SocialPage = () => {
   const friends = [
@@ -34,12 +35,33 @@ const SocialPage = () => {
     },
   ];
 
+  const habitPosts = [
+    {
+      id: '1',
+      userId: '1',
+      userName: 'Alex Kim',
+      userAvatar: '/placeholder.svg',
+      habitName: 'Gym Workout',
+      imageUrl: 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7',
+      timestamp: new Date('2024-03-10T10:30:00'),
+    },
+    {
+      id: '2',
+      userId: '2',
+      userName: 'Sarah Chen',
+      userAvatar: '/placeholder.svg',
+      habitName: 'Morning Yoga',
+      imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
+      timestamp: new Date('2024-03-10T08:15:00'),
+    },
+  ];
+
   return (
     <div className="container mx-auto px-4 py-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto space-y-6"
+        className="max-w-4xl mx-auto space-y-8"
       >
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-focus">Friends Progress</h1>
@@ -92,6 +114,11 @@ const SocialPage = () => {
               </motion.div>
             ))}
           </div>
+        </div>
+
+        <div className="backdrop-blur-sm bg-white/80 rounded-2xl shadow-xl p-8 border border-white/20">
+          <h2 className="text-xl font-semibold text-focus mb-6">Recent Achievements</h2>
+          <HabitFeed posts={habitPosts} />
         </div>
       </motion.div>
     </div>
