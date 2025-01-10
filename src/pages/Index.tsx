@@ -2,9 +2,37 @@ import { motion } from "framer-motion";
 import { ArrowRight, Timer, Camera, Calendar, Users, Shield, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) {
+        // Send welcome email when user signs up
+        fetch('/api/welcome-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: session.user.email }),
+        });
+        navigate('/focus');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   const features = [
     {
@@ -84,6 +112,11 @@ const Index = () => {
     }
   ];
 
+  if (session) {
+    navigate('/focus');
+    return null;
+  }
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -101,23 +134,19 @@ const Index = () => {
             Combine focus timer, AI-powered habit tracking, and social accountability
             to achieve your goals faster than ever.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Button
-              size="lg"
-              className="bg-focus hover:bg-focus/90"
-              onClick={() => navigate("/register")}
-            >
-              Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => navigate("/login")}
-            >
-              Sign In
-            </Button>
-          </div>
         </motion.div>
+      </section>
+
+      {/* Auth Section */}
+      <section className="py-10 px-4">
+        <div className="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+          <Auth
+            supabaseClient={supabase}
+            appearance={{ theme: ThemeSupa }}
+            providers={['google']}
+            redirectTo={window.location.origin}
+          />
+        </div>
       </section>
 
       {/* Features Section */}
@@ -229,49 +258,6 @@ const Index = () => {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center space-y-6">
-          <motion.h2
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="text-3xl font-bold"
-          >
-            Ready to boost your productivity?
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-xl text-gray-600 dark:text-gray-300"
-          >
-            Join thousands of users who have transformed their productivity habits
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="flex gap-4 justify-center"
-          >
-            <Button
-              size="lg"
-              className="bg-focus hover:bg-focus/90"
-              onClick={() => navigate("/register")}
-            >
-              Start Free Trial <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => navigate("/login")}
-            >
-              Sign In
-            </Button>
-          </motion.div>
         </div>
       </section>
     </div>
