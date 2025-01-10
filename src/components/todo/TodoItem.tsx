@@ -2,6 +2,7 @@ import React from 'react';
 import { Flag } from 'lucide-react';
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface Todo {
   id: string;
