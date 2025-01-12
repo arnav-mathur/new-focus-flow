@@ -1,37 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Timer, Camera, Calendar } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
-import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
 
 const Index = () => {
-  const navigate = useNavigate();
-  const [session, setSession] = useState(null);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session) {
-        fetch('/api/welcome-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: session.user.email }),
-        });
-        navigate('/focus');
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
   const features = [
     {
       icon: Timer,
@@ -109,11 +79,6 @@ const Index = () => {
       color: "from-purple-500 to-pink-500",
     }
   ];
-
-  if (session) {
-    navigate('/focus');
-    return null;
-  }
 
   return (
     <div className="min-h-screen">
@@ -247,18 +212,6 @@ const Index = () => {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Auth Section */}
-      <section className="py-10 px-4">
-        <div className="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-          <Auth
-            supabaseClient={supabase}
-            appearance={{ theme: ThemeSupa }}
-            providers={['google']}
-            redirectTo={window.location.origin}
-          />
         </div>
       </section>
     </div>
