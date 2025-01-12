@@ -12,33 +12,43 @@ import Navigation from "./components/Navigation";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route
-            path="/*"
-            element={
-              <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-purple-50">
-                <Navigation />
-                <Routes>
-                  <Route path="/focus" element={<FocusPage />} />
-                  <Route path="/habits" element={<HabitPage />} />
-                  <Route path="/planner" element={<PlannerPage />} />
-                  <Route path="/social" element={<SocialPage />} />
-                  <Route path="*" element={<Navigate to="/social" replace />} />
-                </Routes>
-              </div>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  // Load saved background on mount
+  React.useEffect(() => {
+    const savedBackground = localStorage.getItem('app-background');
+    if (savedBackground) {
+      document.documentElement.classList.add(...savedBackground.split(' '));
+    }
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route
+              path="/*"
+              element={
+                <div className="min-h-screen">
+                  <Navigation />
+                  <Routes>
+                    <Route path="/focus" element={<FocusPage />} />
+                    <Route path="/habits" element={<HabitPage />} />
+                    <Route path="/planner" element={<PlannerPage />} />
+                    <Route path="/social" element={<SocialPage />} />
+                    <Route path="*" element={<Navigate to="/social" replace />} />
+                  </Routes>
+                </div>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
