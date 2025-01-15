@@ -30,7 +30,7 @@ const SocialPage = () => {
             habit_name,
             image_url,
             created_at,
-            profiles (
+            profiles:user_id (
               username,
               avatar_url
             )
@@ -39,15 +39,15 @@ const SocialPage = () => {
 
         if (error) throw error;
 
-        const formattedPosts = postsData?.map(post => ({
+        const formattedPosts = (postsData || []).map(post => ({
           id: post.id,
           userId: post.user_id,
-          userName: post.profiles.username || 'Anonymous',
-          userAvatar: post.profiles.avatar_url,
+          userName: post.profiles?.username || 'Anonymous',
+          userAvatar: post.profiles?.avatar_url,
           habitName: post.habit_name,
           imageUrl: post.image_url || '/placeholder.svg',
           timestamp: new Date(post.created_at),
-        })) || [];
+        }));
 
         setPosts(formattedPosts);
       } catch (error) {
