@@ -32,21 +32,31 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route
-                path="/*"
-                element={
-                  <div className="min-h-screen">
-                    <Navigation />
-                    <Routes>
-                      <Route path="/focus" element={<FocusPage />} />
-                      <Route path="/habits" element={<HabitPage />} />
-                      <Route path="/planner" element={<PlannerPage />} />
-                      <Route path="/social" element={<SocialPage />} />
-                      <Route path="*" element={<Navigate to="/social" replace />} />
-                    </Routes>
-                  </div>
-                }
-              />
+              <Route path="/focus" element={
+                <div className="min-h-screen">
+                  <Navigation />
+                  <FocusPage />
+                </div>
+              } />
+              <Route path="/habits" element={
+                <div className="min-h-screen">
+                  <Navigation />
+                  <HabitPage />
+                </div>
+              } />
+              <Route path="/planner" element={
+                <div className="min-h-screen">
+                  <Navigation />
+                  <PlannerPage />
+                </div>
+              } />
+              <Route path="/social" element={
+                <div className="min-h-screen">
+                  <Navigation />
+                  <SocialPage />
+                </div>
+              } />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
