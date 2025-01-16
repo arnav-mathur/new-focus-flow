@@ -37,13 +37,21 @@ const SocialPage = () => {
           `)
           .order('created_at', { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching posts:', error);
+          throw error;
+        }
 
-        const formattedPosts = (postsData || []).map(post => ({
+        if (!postsData) {
+          setPosts([]);
+          return;
+        }
+
+        const formattedPosts = postsData.map(post => ({
           id: post.id,
           userId: post.user_id,
           userName: post.profiles?.username || 'Anonymous',
-          userAvatar: post.profiles?.avatar_url,
+          userAvatar: post.profiles?.avatar_url || undefined,
           habitName: post.habit_name,
           imageUrl: post.image_url || '/placeholder.svg',
           timestamp: new Date(post.created_at),
