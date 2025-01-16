@@ -41,6 +41,47 @@ export type Database = {
           },
         ]
       }
+      habit_streaks: {
+        Row: {
+          created_at: string
+          current_streak: number | null
+          habit_name: string
+          id: string
+          last_completed_at: string | null
+          longest_streak: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_streak?: number | null
+          habit_name: string
+          id?: string
+          last_completed_at?: string | null
+          longest_streak?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_streak?: number | null
+          habit_name?: string
+          id?: string
+          last_completed_at?: string | null
+          longest_streak?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "habit_streaks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_comments: {
         Row: {
           content: string

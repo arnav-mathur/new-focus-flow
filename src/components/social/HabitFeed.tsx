@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
-import { Share2, MessageCircle } from 'lucide-react';
+import { Share2, MessageCircle, Flame } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { LikeButton } from './LikeButton';
@@ -17,6 +17,8 @@ interface HabitPost {
   habitName: string;
   imageUrl: string;
   timestamp: Date;
+  currentStreak?: number;
+  longestStreak?: number;
 }
 
 interface HabitFeedProps {
@@ -53,7 +55,6 @@ export const HabitFeed = ({ posts }: HabitFeedProps) => {
         });
       }
     } else {
-      // Fallback for browsers that don't support Web Share API
       toast({
         title: "Info",
         description: "Sharing is not supported on this browser.",
@@ -80,12 +81,23 @@ export const HabitFeed = ({ posts }: HabitFeedProps) => {
               <AvatarImage src={post.userAvatar} />
               <AvatarFallback>{post.userName[0]}</AvatarFallback>
             </Avatar>
-            <div>
+            <div className="flex-1">
               <h3 className="font-medium text-gray-900 dark:text-gray-100">{post.userName}</h3>
               <p className="text-sm text-gray-500">
                 Completed {post.habitName} • {format(post.timestamp, 'MMM d, h:mm a')}
               </p>
             </div>
+            {post.currentStreak !== undefined && (
+              <div className="flex items-center gap-1 text-orange-500">
+                <Flame className="h-5 w-5" />
+                <span className="font-medium">{post.currentStreak}</span>
+                {post.longestStreak && post.longestStreak > post.currentStreak && (
+                  <span className="text-sm text-gray-500">
+                    (Best: {post.longestStreak})
+                  </span>
+                )}
+              </div>
+            )}
           </div>
           
           <div className="relative aspect-video rounded-lg overflow-hidden mb-4">
