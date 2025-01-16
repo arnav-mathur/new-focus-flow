@@ -9,38 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      habit_posts: {
-        Row: {
-          created_at: string
-          habit_name: string
-          id: string
-          image_url: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          habit_name: string
-          id?: string
-          image_url?: string | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          habit_name?: string
-          id?: string
-          image_url?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "habit_posts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       post_comments: {
         Row: {
           content: string
