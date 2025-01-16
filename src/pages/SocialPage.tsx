@@ -30,7 +30,7 @@ const SocialPage = () => {
             habit_name,
             image_url,
             created_at,
-            profiles:user_id (
+            profiles (
               username,
               avatar_url
             )
