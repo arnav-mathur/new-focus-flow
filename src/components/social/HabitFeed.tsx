@@ -6,7 +6,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { LikeButton } from './LikeButton';
 import { CommentSection } from './CommentSection';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 interface HabitPost {
@@ -87,17 +87,19 @@ export const HabitFeed = ({ posts }: HabitFeedProps) => {
                 Completed {post.habitName} • {format(post.timestamp, 'MMM d, h:mm a')}
               </p>
             </div>
-            {post.currentStreak !== undefined && (
-              <div className="flex items-center gap-1 text-orange-500">
-                <Flame className="h-5 w-5" />
-                <span className="font-medium">{post.currentStreak}</span>
-                {post.longestStreak && post.longestStreak > post.currentStreak && (
-                  <span className="text-sm text-gray-500">
-                    (Best: {post.longestStreak})
+            <div className="flex items-center gap-2 text-orange-500">
+              <Flame className="h-5 w-5" />
+              <div className="flex flex-col items-end">
+                <span className="font-medium">
+                  {post.currentStreak || 1} day{(post.currentStreak || 1) !== 1 ? 's' : ''}
+                </span>
+                {post.longestStreak && post.longestStreak > (post.currentStreak || 1) && (
+                  <span className="text-xs text-gray-500">
+                    Best: {post.longestStreak} days
                   </span>
                 )}
               </div>
-            )}
+            </div>
           </div>
           
           <div className="relative aspect-video rounded-lg overflow-hidden mb-4">
