@@ -110,27 +110,25 @@ export const HabitFeed = ({ posts }: HabitFeedProps) => {
             />
           </div>
 
-          {currentUser && (
-            <div className="flex items-center justify-between border-t dark:border-gray-700 pt-3">
-              <div className="flex items-center space-x-4">
-                <LikeButton postId={post.id} userId={currentUser} />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleComments(post.id)}
-                >
-                  <MessageCircle className="h-5 w-5" />
-                </Button>
-              </div>
+          <div className="flex items-center justify-between border-t dark:border-gray-700 pt-3">
+            <div className="flex items-center space-x-4">
+              {currentUser && <LikeButton postId={post.id} userId={currentUser} />}
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => handleShare(post)}
+                onClick={() => toggleComments(post.id)}
               >
-                <Share2 className="h-5 w-5" />
+                <MessageCircle className="h-5 w-5" />
               </Button>
             </div>
-          )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleShare(post)}
+            >
+              <Share2 className="h-5 w-5" />
+            </Button>
+          </div>
 
           {expandedPost === post.id && currentUser && (
             <div className="mt-4 border-t dark:border-gray-700 pt-4">
