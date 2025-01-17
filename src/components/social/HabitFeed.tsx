@@ -62,6 +62,18 @@ export const HabitFeed = ({ posts }: HabitFeedProps) => {
     }
   };
 
+  const handleCommentClick = (postId: string) => {
+    if (!currentUser) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to comment on posts.",
+        variant: "destructive",
+      });
+      return;
+    }
+    toggleComments(postId);
+  };
+
   const toggleComments = (postId: string) => {
     setExpandedPost(expandedPost === postId ? null : postId);
   };
@@ -112,11 +124,11 @@ export const HabitFeed = ({ posts }: HabitFeedProps) => {
 
           <div className="flex items-center justify-between border-t dark:border-gray-700 pt-3">
             <div className="flex items-center space-x-4">
-              {currentUser && <LikeButton postId={post.id} userId={currentUser} />}
+              <LikeButton postId={post.id} userId={currentUser || ''} />
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => toggleComments(post.id)}
+                onClick={() => handleCommentClick(post.id)}
               >
                 <MessageCircle className="h-5 w-5" />
               </Button>
