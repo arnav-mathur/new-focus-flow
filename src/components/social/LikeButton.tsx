@@ -16,11 +16,15 @@ export const LikeButton = ({ postId, userId }: LikeButtonProps) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    checkLikeStatus();
     fetchLikeCount();
-  }, [postId]);
+    if (userId) {
+      checkLikeStatus();
+    }
+  }, [postId, userId]);
 
   const checkLikeStatus = async () => {
+    if (!userId) return;
+    
     const { data, error } = await supabase
       .from('post_likes')
       .select('id')
@@ -51,6 +55,15 @@ export const LikeButton = ({ postId, userId }: LikeButtonProps) => {
   };
 
   const handleLike = async () => {
+    if (!userId) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to like posts.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     if (isLiked) {
