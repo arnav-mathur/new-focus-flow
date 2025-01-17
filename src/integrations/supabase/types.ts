@@ -82,6 +82,54 @@ export type Database = {
           },
         ]
       }
+      heads_up_challenges: {
+        Row: {
+          challenged_id: string
+          challenger_id: string
+          created_at: string
+          habit_name: string
+          id: string
+          is_public: boolean
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          challenged_id: string
+          challenger_id: string
+          created_at?: string
+          habit_name: string
+          id?: string
+          is_public?: boolean
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          challenged_id?: string
+          challenger_id?: string
+          created_at?: string
+          habit_name?: string
+          id?: string
+          is_public?: boolean
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "heads_up_challenges_challenged_id_fkey"
+            columns: ["challenged_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "heads_up_challenges_challenger_id_fkey"
+            columns: ["challenger_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_comments: {
         Row: {
           content: string

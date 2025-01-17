@@ -5,6 +5,7 @@ import { Share2, MessageCircle, Flame } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { LikeButton } from './LikeButton';
+import { HeadsUpButton } from './HeadsUpButton';
 import { CommentSection } from './CommentSection';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -132,6 +133,7 @@ export const HabitFeed = ({ posts }: HabitFeedProps) => {
               >
                 <MessageCircle className="h-5 w-5" />
               </Button>
+              <HeadsUpButton userId={post.userId} userName={post.userName} />
             </div>
             <Button
               variant="ghost"
