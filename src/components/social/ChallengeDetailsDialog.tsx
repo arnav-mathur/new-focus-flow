@@ -5,6 +5,7 @@ import { ChallengeStatusBadge } from "./ChallengeStatusBadge";
 import { Challenge } from "@/hooks/useChallenges";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ChallengeDetailsDialogProps {
   challenge: Challenge | null;
@@ -25,6 +26,7 @@ export function ChallengeDetailsDialog({
   onOpenChange,
 }: ChallengeDetailsDialogProps) {
   const [participantsProgress, setParticipantsProgress] = useState<ParticipantProgress[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (challenge && open) {
@@ -48,6 +50,11 @@ export function ChallengeDetailsDialog({
 
       if (error) {
         console.error('Error fetching participants progress:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load participants' progress. Please try again.",
+        });
         return;
       }
 
@@ -59,6 +66,11 @@ export function ChallengeDetailsDialog({
       })));
     } catch (err) {
       console.error('Error:', err);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+      });
     }
   };
 

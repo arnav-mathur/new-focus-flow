@@ -29,7 +29,7 @@ export interface Challenge {
 
 const mockChallenges: Challenge[] = [
   {
-    id: '1',
+    id: '123e4567-e89b-12d3-a456-426614174000',
     challenger_id: 'mock-1',
     challenged_id: 'mock-2',
     habit_name: 'Daily Meditation',
@@ -48,7 +48,7 @@ const mockChallenges: Challenge[] = [
     }
   },
   {
-    id: '2',
+    id: '123e4567-e89b-12d3-a456-426614174001',
     challenger_id: 'mock-2',
     challenged_id: 'mock-1',
     habit_name: 'Morning Workout',
@@ -69,7 +69,7 @@ const mockChallenges: Challenge[] = [
     }
   },
   {
-    id: '3',
+    id: '123e4567-e89b-12d3-a456-426614174002',
     challenger_id: 'mock-3',
     challenged_id: 'mock-1',
     habit_name: 'Reading',
@@ -87,15 +87,6 @@ const mockChallenges: Challenge[] = [
     }
   }
 ];
-
-export const useChallenges = () => {
-  const [challenges, setChallenges] = useState<Challenge[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchChallenges();
-  }, []);
 
   const fetchChallenges = async () => {
     try {
@@ -159,6 +150,15 @@ export const useChallenges = () => {
       ? (status as Challenge['status']) 
       : 'pending';
   };
+
+export const useChallenges = () => {
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchChallenges();
+  }, []);
 
   return { challenges, loading, error };
 };
