@@ -13,6 +13,10 @@ export interface Challenge {
   location?: string;
   is_group_challenge?: boolean;
   max_participants?: number;
+  break_days_allowed?: boolean;
+  max_break_days?: number;
+  challenge_duration_days?: number;
+  start_date?: string;
   challenger: {
     username: string;
     avatar_url: string;
@@ -97,7 +101,6 @@ export const useChallenges = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
-      // If no authenticated user, return mock data
       if (!user) {
         console.log('No authenticated user found, returning mock challenges');
         setChallenges(mockChallenges);
@@ -119,6 +122,10 @@ export const useChallenges = () => {
           location,
           is_group_challenge,
           max_participants,
+          break_days_allowed,
+          max_break_days,
+          challenge_duration_days,
+          start_date,
           challenger:profiles!heads_up_challenges_challenger_id_fkey(username, avatar_url),
           challenged:profiles!heads_up_challenges_challenged_id_fkey(username, avatar_url)
         `)
@@ -130,7 +137,6 @@ export const useChallenges = () => {
         return;
       }
 
-      // Validate and transform the status field
       const validatedData = (data || []).map(challenge => {
         const validStatus = validateStatus(challenge.status);
         return {
@@ -147,7 +153,6 @@ export const useChallenges = () => {
     }
   };
 
-  // Helper function to validate status
   const validateStatus = (status: string): Challenge['status'] => {
     const validStatuses: Challenge['status'][] = ['pending', 'accepted', 'declined', 'completed'];
     return validStatuses.includes(status as Challenge['status']) 

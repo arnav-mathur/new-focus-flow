@@ -11,28 +11,37 @@ export type Database = {
     Tables: {
       challenge_participants: {
         Row: {
+          break_days_used: number | null
           challenge_id: string | null
           created_at: string | null
           current_streak: number | null
+          days_completed: number | null
           id: string
+          last_break_date: string | null
           status: string | null
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
+          break_days_used?: number | null
           challenge_id?: string | null
           created_at?: string | null
           current_streak?: number | null
+          days_completed?: number | null
           id?: string
+          last_break_date?: string | null
           status?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
+          break_days_used?: number | null
           challenge_id?: string | null
           created_at?: string | null
           current_streak?: number | null
+          days_completed?: number | null
           id?: string
+          last_break_date?: string | null
           status?: string | null
           updated_at?: string | null
           user_id?: string | null
@@ -129,6 +138,8 @@ export type Database = {
       }
       heads_up_challenges: {
         Row: {
+          break_days_allowed: boolean | null
+          challenge_duration_days: number | null
           challenged_id: string
           challenger_id: string
           created_at: string
@@ -138,11 +149,15 @@ export type Database = {
           is_group_challenge: boolean | null
           is_public: boolean
           location: string | null
+          max_break_days: number | null
           max_participants: number | null
+          start_date: string | null
           status: string
           updated_at: string
         }
         Insert: {
+          break_days_allowed?: boolean | null
+          challenge_duration_days?: number | null
           challenged_id: string
           challenger_id: string
           created_at?: string
@@ -152,11 +167,15 @@ export type Database = {
           is_group_challenge?: boolean | null
           is_public?: boolean
           location?: string | null
+          max_break_days?: number | null
           max_participants?: number | null
+          start_date?: string | null
           status?: string
           updated_at?: string
         }
         Update: {
+          break_days_allowed?: boolean | null
+          challenge_duration_days?: number | null
           challenged_id?: string
           challenger_id?: string
           created_at?: string
@@ -166,7 +185,9 @@ export type Database = {
           is_group_challenge?: boolean | null
           is_public?: boolean
           location?: string | null
+          max_break_days?: number | null
           max_participants?: number | null
+          start_date?: string | null
           status?: string
           updated_at?: string
         }
