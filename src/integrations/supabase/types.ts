@@ -9,6 +9,51 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      challenge_participants: {
+        Row: {
+          challenge_id: string | null
+          created_at: string | null
+          current_streak: number | null
+          id: string
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          challenge_id?: string | null
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          challenge_id?: string | null
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_participants_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "heads_up_challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challenge_participants_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       habit_posts: {
         Row: {
           created_at: string
@@ -87,9 +132,13 @@ export type Database = {
           challenged_id: string
           challenger_id: string
           created_at: string
+          description: string | null
           habit_name: string
           id: string
+          is_group_challenge: boolean | null
           is_public: boolean
+          location: string | null
+          max_participants: number | null
           status: string
           updated_at: string
         }
@@ -97,9 +146,13 @@ export type Database = {
           challenged_id: string
           challenger_id: string
           created_at?: string
+          description?: string | null
           habit_name: string
           id?: string
+          is_group_challenge?: boolean | null
           is_public?: boolean
+          location?: string | null
+          max_participants?: number | null
           status?: string
           updated_at?: string
         }
@@ -107,9 +160,13 @@ export type Database = {
           challenged_id?: string
           challenger_id?: string
           created_at?: string
+          description?: string | null
           habit_name?: string
           id?: string
+          is_group_challenge?: boolean | null
           is_public?: boolean
+          location?: string | null
+          max_participants?: number | null
           status?: string
           updated_at?: string
         }

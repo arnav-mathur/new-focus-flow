@@ -9,6 +9,10 @@ export interface Challenge {
   status: 'pending' | 'accepted' | 'declined' | 'completed';
   is_public: boolean;
   created_at: string;
+  description?: string;
+  location?: string;
+  is_group_challenge?: boolean;
+  max_participants?: number;
   challenger: {
     username: string;
     avatar_url: string;
@@ -28,6 +32,8 @@ const mockChallenges: Challenge[] = [
     status: 'pending',
     is_public: true,
     created_at: new Date().toISOString(),
+    description: 'Join me for a daily meditation practice!',
+    location: 'Zen Garden',
     challenger: {
       username: 'MeditationMaster',
       avatar_url: '/placeholder.svg'
@@ -44,7 +50,11 @@ const mockChallenges: Challenge[] = [
     habit_name: 'Morning Workout',
     status: 'accepted',
     is_public: true,
-    created_at: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+    created_at: new Date(Date.now() - 86400000).toISOString(),
+    description: 'Let\'s start the day with energy!',
+    location: 'Local Gym',
+    is_group_challenge: true,
+    max_participants: 4,
     challenger: {
       username: 'FitnessGuru',
       avatar_url: '/placeholder.svg'
@@ -61,7 +71,8 @@ const mockChallenges: Challenge[] = [
     habit_name: 'Reading',
     status: 'completed',
     is_public: false,
-    created_at: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+    created_at: new Date(Date.now() - 172800000).toISOString(),
+    description: 'Read for 30 minutes every day',
     challenger: {
       username: 'BookWorm',
       avatar_url: '/placeholder.svg'
@@ -104,6 +115,10 @@ export const useChallenges = () => {
           status,
           is_public,
           created_at,
+          description,
+          location,
+          is_group_challenge,
+          max_participants,
           challenger:profiles!heads_up_challenges_challenger_id_fkey(username, avatar_url),
           challenged:profiles!heads_up_challenges_challenged_id_fkey(username, avatar_url)
         `)
@@ -115,12 +130,7 @@ export const useChallenges = () => {
         return;
       }
 
-      const typedData = (data || []).map(challenge => ({
-        ...challenge,
-        status: challenge.status as Challenge['status']
-      }));
-
-      setChallenges(typedData);
+      setChallenges(data || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
