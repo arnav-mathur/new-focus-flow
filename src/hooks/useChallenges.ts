@@ -19,6 +19,60 @@ export interface Challenge {
   };
 }
 
+const mockChallenges: Challenge[] = [
+  {
+    id: '1',
+    challenger_id: 'mock-1',
+    challenged_id: 'mock-2',
+    habit_name: 'Daily Meditation',
+    status: 'pending',
+    is_public: true,
+    created_at: new Date().toISOString(),
+    challenger: {
+      username: 'MeditationMaster',
+      avatar_url: '/placeholder.svg'
+    },
+    challenged: {
+      username: 'ZenLearner',
+      avatar_url: '/placeholder.svg'
+    }
+  },
+  {
+    id: '2',
+    challenger_id: 'mock-2',
+    challenged_id: 'mock-1',
+    habit_name: 'Morning Workout',
+    status: 'accepted',
+    is_public: true,
+    created_at: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+    challenger: {
+      username: 'FitnessGuru',
+      avatar_url: '/placeholder.svg'
+    },
+    challenged: {
+      username: 'WorkoutBeginner',
+      avatar_url: '/placeholder.svg'
+    }
+  },
+  {
+    id: '3',
+    challenger_id: 'mock-3',
+    challenged_id: 'mock-1',
+    habit_name: 'Reading',
+    status: 'completed',
+    is_public: false,
+    created_at: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+    challenger: {
+      username: 'BookWorm',
+      avatar_url: '/placeholder.svg'
+    },
+    challenged: {
+      username: 'NewReader',
+      avatar_url: '/placeholder.svg'
+    }
+  }
+];
+
 export const useChallenges = () => {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,8 +85,11 @@ export const useChallenges = () => {
   const fetchChallenges = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
+      
+      // If no authenticated user, return mock data
       if (!user) {
-        setError('User not authenticated');
+        console.log('No authenticated user found, returning mock challenges');
+        setChallenges(mockChallenges);
         setLoading(false);
         return;
       }
