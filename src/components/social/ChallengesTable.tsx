@@ -44,9 +44,15 @@ export const ChallengesTable = () => {
     const { data, error } = await supabase
       .from('heads_up_challenges')
       .select(`
-        *,
-        challenger:challenger_id(username, avatar_url),
-        challenged:challenged_id(username, avatar_url)
+        id,
+        challenger_id,
+        challenged_id,
+        habit_name,
+        status,
+        is_public,
+        created_at,
+        challenger:profiles!heads_up_challenges_challenger_id_fkey(username, avatar_url),
+        challenged:profiles!heads_up_challenges_challenged_id_fkey(username, avatar_url)
       `)
       .or(`challenger_id.eq.${user.id},challenged_id.eq.${user.id}`)
       .order('created_at', { ascending: false });
@@ -56,7 +62,13 @@ export const ChallengesTable = () => {
       return;
     }
 
-    setChallenges(data || []);
+    // Type assertion to ensure the status is of the correct type
+    const typedData = (data || []).map(challenge => ({
+      ...challenge,
+      status: challenge.status as Challenge['status']
+    }));
+
+    setChallenges(typedData);
     setLoading(false);
   };
 
