@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { format } from 'date-fns';
 import {
   Table,
@@ -9,83 +9,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
-
-interface Challenge {
-  id: string;
-  challenger_id: string;
-  challenged_id: string;
-  habit_name: string;
-  status: 'pending' | 'accepted' | 'declined' | 'completed';
-  is_public: boolean;
-  created_at: string;
-  challenger: {
-    username: string;
-    avatar_url: string;
-  };
-  challenged: {
-    username: string;
-    avatar_url: string;
-  };
-}
+import { useChallenges } from "@/hooks/useChallenges";
+import { ChallengeStatusBadge } from './ChallengeStatusBadge';
 
 export const ChallengesTable = () => {
-  const [challenges, setChallenges] = useState<Challenge[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { challenges, loading, error } = useChallenges();
 
-  useEffect(() => {
-    fetchChallenges();
-  }, []);
-
-  const fetchChallenges = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data, error } = await supabase
-      .from('heads_up_challenges')
-      .select(`
-        id,
-        challenger_id,
-        challenged_id,
-        habit_name,
-        status,
-        is_public,
-        created_at,
-        challenger:profiles!heads_up_challenges_challenger_id_fkey(username, avatar_url),
-        challenged:profiles!heads_up_challenges_challenged_id_fkey(username, avatar_url)
-      `)
-      .or(`challenger_id.eq.${user.id},challenged_id.eq.${user.id}`)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching challenges:', error);
-      return;
-    }
-
-    // Type assertion to ensure the status is of the correct type
-    const typedData = (data || []).map(challenge => ({
-      ...challenge,
-      status: challenge.status as Challenge['status']
-    }));
-
-    setChallenges(typedData);
-    setLoading(false);
-  };
-
-  const getStatusBadgeColor = (status: Challenge['status']) => {
-    switch (status) {
-      case 'pending':
-        return 'bg-yellow-500';
-      case 'accepted':
-        return 'bg-green-500';
-      case 'declined':
-        return 'bg-red-500';
-      case 'completed':
-        return 'bg-blue-500';
-      default:
-        return 'bg-gray-500';
-    }
-  };
+  if (error) {
+    return (
+      <div className="text-center py-4 text-red-500">
+        Error loading challenges: {error}
+      </div>
+    );
+  }
 
   if (loading) {
     return <div className="text-center py-4">Loading challenges...</div>;
@@ -119,9 +55,7 @@ export const ChallengesTable = () => {
               <TableCell>{challenge.challenger.username}</TableCell>
               <TableCell>{challenge.challenged.username}</TableCell>
               <TableCell>
-                <Badge className={getStatusBadgeColor(challenge.status)}>
-                  {challenge.status}
-                </Badge>
+                <ChallengeStatusBadge status={challenge.status} />
               </TableCell>
               <TableCell>
                 {format(new Date(challenge.created_at), 'MMM d, yyyy')}
