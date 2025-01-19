@@ -88,6 +88,18 @@ const mockChallenges: Challenge[] = [
   }
 ];
 
+const validateStatus = (status: string): Challenge['status'] => {
+  const validStatuses: Challenge['status'][] = ['pending', 'accepted', 'declined', 'completed'];
+  return validStatuses.includes(status as Challenge['status']) 
+    ? (status as Challenge['status']) 
+    : 'pending';
+};
+
+export const useChallenges = () => {
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const fetchChallenges = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -143,18 +155,6 @@ const mockChallenges: Challenge[] = [
       setLoading(false);
     }
   };
-
-  const validateStatus = (status: string): Challenge['status'] => {
-    const validStatuses: Challenge['status'][] = ['pending', 'accepted', 'declined', 'completed'];
-    return validStatuses.includes(status as Challenge['status']) 
-      ? (status as Challenge['status']) 
-      : 'pending';
-  };
-
-export const useChallenges = () => {
-  const [challenges, setChallenges] = useState<Challenge[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchChallenges();
