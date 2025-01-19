@@ -130,12 +130,29 @@ export const useChallenges = () => {
         return;
       }
 
-      setChallenges(data || []);
+      // Validate and transform the status field
+      const validatedData = (data || []).map(challenge => {
+        const validStatus = validateStatus(challenge.status);
+        return {
+          ...challenge,
+          status: validStatus
+        };
+      }) as Challenge[];
+
+      setChallenges(validatedData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
+  };
+
+  // Helper function to validate status
+  const validateStatus = (status: string): Challenge['status'] => {
+    const validStatuses: Challenge['status'][] = ['pending', 'accepted', 'declined', 'completed'];
+    return validStatuses.includes(status as Challenge['status']) 
+      ? (status as Challenge['status']) 
+      : 'pending';
   };
 
   return { challenges, loading, error };
