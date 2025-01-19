@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { WalkthroughTutorial } from "@/components/tutorial/WalkthroughTutorial";
 import { HabitFeed } from "@/components/social/HabitFeed";
+import { ChallengesTable } from "@/components/social/ChallengesTable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -76,6 +78,7 @@ const SocialPage = () => {
 
       console.log('Processed posts:', postsWithStreaks);
       setPosts(postsWithStreaks);
+
     } catch (error) {
       console.error('Error in fetchPosts:', error);
       toast({
@@ -98,22 +101,28 @@ const SocialPage = () => {
     );
   }
 
-  if (posts.length === 0) {
-    return (
-      <div className="container mx-auto py-8">
-        <WalkthroughTutorial />
-        <div className="text-center py-8">
-          <h3 className="text-lg font-medium">No posts yet</h3>
-          <p className="text-gray-500">Be the first to share your habit progress!</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="container mx-auto py-8">
       <WalkthroughTutorial />
-      <HabitFeed posts={posts} />
+      <Tabs defaultValue="feed" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="feed">Feed</TabsTrigger>
+          <TabsTrigger value="challenges">Challenges</TabsTrigger>
+        </TabsList>
+        <TabsContent value="feed">
+          {posts.length === 0 ? (
+            <div className="text-center py-8">
+              <h3 className="text-lg font-medium">No posts yet</h3>
+              <p className="text-gray-500">Be the first to share your habit progress!</p>
+            </div>
+          ) : (
+            <HabitFeed posts={posts} />
+          )}
+        </TabsContent>
+        <TabsContent value="challenges">
+          <ChallengesTable />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
