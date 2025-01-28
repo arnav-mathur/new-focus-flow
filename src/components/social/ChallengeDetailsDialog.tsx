@@ -1,11 +1,12 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { format, differenceInDays } from "date-fns";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { format, differenceInDays } from 'date-fns';
 import { Badge } from "@/components/ui/badge";
-import { ChallengeStatusBadge } from "./ChallengeStatusBadge";
-import { Challenge } from "@/hooks/useChallenges";
+import { ChallengeStatusBadge } from './ChallengeStatusBadge';
+import { Challenge, VerificationMode } from "@/hooks/useChallenges";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { Flame, Brain, MapPin, Users } from 'lucide-react';
 
 interface ChallengeDetailsDialogProps {
   challenge: Challenge | null;
@@ -19,6 +20,19 @@ interface ParticipantProgress {
   breakDaysUsed: number;
   currentStreak: number;
 }
+
+const VerificationModeIcon = ({ mode }: { mode: VerificationMode }) => {
+  switch (mode) {
+    case 'ai':
+      return <Brain className="h-4 w-4" />;
+    case 'location':
+      return <MapPin className="h-4 w-4" />;
+    case 'partner':
+      return <Users className="h-4 w-4" />;
+    default:
+      return null;
+  }
+};
 
 export function ChallengeDetailsDialog({
   challenge,
@@ -90,6 +104,7 @@ export function ChallengeDetailsDialog({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{challenge.habit_name} Challenge</DialogTitle>
+          <DialogDescription>Track your progress and verification methods</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div>
@@ -97,6 +112,18 @@ export function ChallengeDetailsDialog({
             <ChallengeStatusBadge status={challenge.status} />
           </div>
           
+          <div>
+            <h4 className="text-sm font-medium mb-2">Verification Methods</h4>
+            <div className="flex gap-2">
+              {challenge.verification_modes?.map((mode, index) => (
+                <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                  <VerificationModeIcon mode={mode} />
+                  <span className="capitalize">{mode}</span>
+                </Badge>
+              ))}
+            </div>
+          </div>
+
           <div>
             <h4 className="text-sm font-medium mb-2">Participants Progress</h4>
             <div className="space-y-3">
@@ -106,7 +133,10 @@ export function ChallengeDetailsDialog({
                 {participantsProgress.find(p => p.userId === challenge.challenger_id) && (
                   <div className="ml-4 text-sm">
                     <div>Days Completed: {participantsProgress.find(p => p.userId === challenge.challenger_id)?.daysCompleted}</div>
-                    <div>Current Streak: {participantsProgress.find(p => p.userId === challenge.challenger_id)?.currentStreak} days</div>
+                    <div className="flex items-center">
+                      Current Streak: {participantsProgress.find(p => p.userId === challenge.challenger_id)?.currentStreak} days
+                      <Flame className="h-4 w-4 text-orange-500 ml-1" />
+                    </div>
                   </div>
                 )}
               </div>
@@ -116,7 +146,10 @@ export function ChallengeDetailsDialog({
                 {participantsProgress.find(p => p.userId === challenge.challenged_id) && (
                   <div className="ml-4 text-sm">
                     <div>Days Completed: {participantsProgress.find(p => p.userId === challenge.challenged_id)?.daysCompleted}</div>
-                    <div>Current Streak: {participantsProgress.find(p => p.userId === challenge.challenged_id)?.currentStreak} days</div>
+                    <div className="flex items-center">
+                      Current Streak: {participantsProgress.find(p => p.userId === challenge.challenged_id)?.currentStreak} days
+                      <Flame className="h-4 w-4 text-orange-500 ml-1" />
+                    </div>
                   </div>
                 )}
               </div>

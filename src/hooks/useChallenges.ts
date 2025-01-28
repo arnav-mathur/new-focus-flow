@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 
+export type VerificationMode = 'ai' | 'location' | 'partner' | null;
+
 export interface Challenge {
   id: string;
   challenger_id: string;
@@ -17,6 +19,7 @@ export interface Challenge {
   max_break_days?: number;
   challenge_duration_days?: number;
   start_date?: string;
+  verification_modes?: VerificationMode[];
   challenger: {
     username: string;
     avatar_url: string;
@@ -38,6 +41,7 @@ const mockChallenges: Challenge[] = [
     created_at: new Date().toISOString(),
     description: 'Join me for a daily meditation practice!',
     location: 'Zen Garden',
+    verification_modes: ['ai', 'partner'],
     challenger: {
       username: 'MeditationMaster',
       avatar_url: '/placeholder.svg'
@@ -129,6 +133,7 @@ export const useChallenges = () => {
           max_break_days,
           challenge_duration_days,
           start_date,
+          verification_modes,
           challenger:profiles!heads_up_challenges_challenger_id_fkey(username, avatar_url),
           challenged:profiles!heads_up_challenges_challenged_id_fkey(username, avatar_url)
         `)
