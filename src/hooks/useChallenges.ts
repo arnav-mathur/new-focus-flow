@@ -104,6 +104,10 @@ export const useChallenges = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    fetchChallenges();
+  }, []);
+
   const fetchChallenges = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -133,7 +137,6 @@ export const useChallenges = () => {
           max_break_days,
           challenge_duration_days,
           start_date,
-          verification_modes,
           challenger:profiles!heads_up_challenges_challenger_id_fkey(username, avatar_url),
           challenged:profiles!heads_up_challenges_challenged_id_fkey(username, avatar_url)
         `)
@@ -141,29 +144,31 @@ export const useChallenges = () => {
         .order('created_at', { ascending: false });
 
       if (supabaseError) {
+        console.error('Supabase error:', supabaseError);
         setError(supabaseError.message);
         return;
       }
 
-      const validatedData = (data || []).map(challenge => {
-        const validStatus = validateStatus(challenge.status);
-        return {
-          ...challenge,
-          status: validStatus
-        };
-      }) as Challenge[];
+      if (!data) {
+        console.log('No data returned from Supabase');
+        setChallenges([]);
+        return;
+      }
+
+      const validatedData = data.map(challenge => ({
+        ...challenge,
+        status: validateStatus(challenge.status),
+        verification_modes: challenge.verification_modes || ['partner'] // Default to partner verification if not set
+      })) as Challenge[];
 
       setChallenges(validatedData);
     } catch (err) {
+      console.error('Error in fetchChallenges:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchChallenges();
-  }, []);
 
   return { challenges, loading, error };
 };
