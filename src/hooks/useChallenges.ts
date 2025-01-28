@@ -158,7 +158,7 @@ export const useChallenges = () => {
       const validatedData = data.map(challenge => ({
         ...challenge,
         status: validateStatus(challenge.status),
-        verification_modes: challenge.verification_modes || ['partner'] // Default to partner verification if not set
+        verification_modes: ['partner'] as VerificationMode[] // Default to partner verification
       })) as Challenge[];
 
       setChallenges(validatedData);
